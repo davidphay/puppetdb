@@ -29,6 +29,7 @@ endif
 prep:
 	@git fetch --unshallow 2> /dev/null ||:
 	@git fetch origin 'refs/tags/*:refs/tags/*'
+	@echo $(VERSION)
 ifeq ($(SKIP_BUILD),true)
 	@echo "SKIP_BUILD is true, exiting with 1"
 	@exit 1
@@ -56,7 +57,7 @@ build: prep
 		--file puppetdb/Dockerfile \
 		--tag $(NAMESPACE)/puppetdb:$(VERSION) \
 		$(PWD)/..
-	@docker tag $(NAMESPACE)/puppetdb:$(VERSION) $(NAMESPACE)/puppetdb:$(LATEST_VERSION)
+	@docker tag $(NAMESPACE)/puppetdb:$(VERSION) $(NAMESPACE)/puppetdb:latest
 
 test: prep
 	bundle install --path $$BUNDLE_PATH --gemfile $$GEMFILE --with test
@@ -67,7 +68,7 @@ test: prep
 push-image: prep
 	@docker images
 	@docker push $(NAMESPACE)/puppetdb:$(VERSION)
-	@docker push $(NAMESPACE)/puppetdb:$(LATEST_VERSION)
+	@docker push $(NAMESPACE)/puppetdb:latest
 
 push-readme:
 	@docker pull sheogorath/readme-to-dockerhub
